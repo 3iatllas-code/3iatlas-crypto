@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>$3IATLAS — The Signal Is Live</title>
+  <style>
+    /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Courier New', monospace;
+    }
+
+    :root {
+      --neon-blue: #0af;
+      --neon-cyan: #0ff;
+      --neon-green: #0f0;
+      --neon-yellow: #ff0;
+      --dark-bg: #000;
+      --terminal-text: #0af;
+    }
+
+    body {
+      background: var(--dark-bg);
+      color: var(--terminal-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.5;
+      background-image: 
+        linear-gradient(rgba(18, 16, 34, 0.02) 50%, transparent 50%),
+        repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.015), rgba(0, 255, 255, 0.015) 1px, transparent 1px, transparent 2px);
+      animation: noise 3s infinite linear;
+    }
+
+    @keyframes noise {
+      0%, 100% { background-position: 0 0, 0 0; }
+      10% { background-position: -100px 0, 0 0; }
+      20% { background-position: -50px 0, 0 0; }
+      30% { background-position: -120px 0, 0 0; }
+      40% { background-position: -30px 0, 0 0; }
+      50% { background-position: -90px 0, 0 0; }
+      60% { background-position: -20px 0, 0 0; }      70% { background-position: -110px 0, 0 0; }
+      80% { background-position: -40px 0, 0 0; }
+      90% { background-position: -100px 0, 0 0; }
+    }
+
+    .cosmic-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -5;
+      overflow: hidden;
+    }
+
+    .stars-far {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background-image: 
+        radial-gradient(rgba(255, 255, 255, 0.7) 1px, transparent 1px),
+        radial-gradient(rgba(200, 230, 255, 0.5) 1px, transparent 1px);
+      background-size: 80px 80px, 120px 120px;
+      background-position: 0 0, 40px 40px;
+      animation: driftFar 180s infinite linear;
+      opacity: 0.6;
+    }
+
+    .stars-mid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 150%;
+      height: 150%;
+      background-image: 
+        radial-gradient(rgba(255, 255, 255, 0.9) 1.2px, transparent 1.2px),
+        radial-gradient(rgba(150, 200, 255, 0.7) 1.5px, transparent 1.5px);
+      background-size: 100px 100px, 160px 160px;
+      background-position: 20px 20px, 80px 80px;
+      animation: driftMid 120s infinite linear reverse;
+      opacity: 0.8;
+    }
+
+    .stars-near {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 120%;      height: 120%;
+      background-image: 
+        radial-gradient(rgba(255, 255, 255, 1) 1.8px, transparent 1.8px),
+        radial-gradient(rgba(255, 200, 200, 0.9) 2px, transparent 2px);
+      background-size: 140px 140px, 200px 200px;
+      background-position: 50px 50px, 120px 120px;
+      animation: driftNear 80s infinite linear;
+      opacity: 1;
+    }
+
+    .nebula {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(0, 50, 150, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(0, 100, 200, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(50, 0, 100, 0.05) 0%, transparent 50%);
+      animation: pulseNebula 30s infinite alternate;
+      opacity: 0.7;
+    }
+
+    @keyframes driftFar { 0% { transform: translate(0, 0); } 100% { transform: translate(-40px, -40px); } }
+    @keyframes driftMid { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 30px); } }
+    @keyframes driftNear { 0% { transform: translate(0, 0); } 100% { transform: translate(-20px, -20px); } }
+    @keyframes pulseNebula { 0% { opacity: 0.6; } 100% { opacity: 0.8; } }
+
+    .stars-near::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+      background-size: 180px 180px;
+      animation: twinkle 4s infinite alternate;
+      opacity: 0.5;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      20% { opacity: 0.6; }
+      40% { opacity: 0.2; }
+      60% { opacity: 0.8; }
+      80% { opacity: 0.4; }
+    }
+    .arrows-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -4;
+    }
+    .arrow {
+      position: absolute;
+      width: 6px;
+      height: 20px;
+      border-radius: 4px;
+      animation: floatArrow 18s infinite linear;
+      opacity: 0.6;
+    }
+    .arrow.up {
+      background: linear-gradient(to top, var(--neon-green), #0c0);
+      box-shadow: 0 0 8px var(--neon-green);
+      animation-name: floatUp;
+    }
+    .arrow.down {
+      background: linear-gradient(to bottom, #f00, #c00);
+      box-shadow: 0 0 8px #f00;
+      animation-name: floatDown;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) translateX(-30px); opacity: 0.4; }
+      100% { transform: translateY(-100vh) translateX(30px); opacity: 0.7; }
+    }
+    @keyframes floatDown {
+      0% { transform: translateY(-100vh) translateX(30px); opacity: 0.4; }
+      100% { transform: translateY(100vh) translateX(-30px); opacity: 0.7; }
+    }
+
+    .cosmic-hand {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 200px;
+      height: auto;
+      z-index: 9999;
+      cursor: pointer;
+      transition: transform 0.6s ease-in-out;
+      filter: drop-shadow(0 0 12px rgba(0, 255, 255, 0.6));
+      animation: handFloat 4s infinite ease-in-out;
+    }
+    .cosmic-hand:hover {
+      transform: scale(1.05) rotate(-5deg);    }
+    @keyframes handFloat {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(2deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    #start-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0d0402, #1a0a05);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1500;
+      padding: 20px;
+    }
+    .start-image {
+      max-width: 90%;
+      height: auto;
+      margin-bottom: 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 50px rgba(255, 100, 50, 0.7);
+      animation: pulseImage 3s infinite alternate;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    @keyframes pulseImage {
+      from { transform: scale(1); }
+      to { transform: scale(1.025); }
+    }
+    .start-btn {
+      background: transparent;
+      color: var(--neon-cyan);
+      border: 2px solid var(--neon-cyan);
+      padding: 16px 48px;
+      font-size: 1.3rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 2px;
+      font-weight: bold;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+    }
+    .start-btn::before {      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.25), transparent);
+      transition: 0.6s;
+    }
+    .start-btn:hover::before {
+      left: 100%;
+    }
+    .start-btn:hover {
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.9);
+      transform: scale(1.05);
+    }
+
+    #main-content {
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    #animated-title {
+      font-size: 2.8rem;
+      margin: 40px 0 30px;
+      letter-spacing: 2px;
+      line-height: 1.2;
+      position: relative;
+      text-shadow: 0 0 12px rgba(0, 255, 255, 0.7);
+      animation: glitch 3s infinite alternate-reverse;
+    }
+
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      animation: scanLine 4s infinite;
+    }
+
+    @keyframes scanLine {
+      0% { transform: translateX(-100%); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateX(100%); opacity: 0; }
+    }
+
+    @keyframes glitch {      0% { text-shadow: 0 0 12px rgba(0, 255, 255, 0.7); }
+      2% { text-shadow: -2px 0 10px rgba(255, 0, 0, 0.8), 2px 0 10px rgba(0, 255, 255, 0.8); }
+      4% { text-shadow: 0 0 12px rgba(0, 255, 255, 0.7); }
+      100% { text-shadow: 0 0 12px rgba(0, 255, 255, 0.7); }
+    }
+
+    #animated-title span {
+      display: inline-block;
+      opacity: 0;
+      animation: reveal 0.8s forwards;
+    }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .terminal-line {
+      color: var(--neon-green);
+      font-size: 1.15rem;
+      margin-bottom: 30px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
+    }
+
+    .launch-label {
+      color: var(--neon-cyan);
+      font-size: 1.3rem;
+      margin: 20px 0 25px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+    }
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 20px 0 40px;
+    }
+    .countdown div {
+      background: rgba(0, 10, 20, 0.92);
+      border: 2px solid var(--neon-blue);
+      color: var(--neon-cyan);
+      padding: 16px 10px;
+      min-width: 85px;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+      position: relative;      overflow: hidden;
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+      animation: flicker 2.5s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      92% { opacity: 1; }
+      93% { opacity: 0.8; }
+      94% { opacity: 1; }
+      95% { opacity: 0.9; }
+      96% { opacity: 1; }
+    }
+
+    .btns {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 25px;
+    }
+    .terminal-cmd {
+      background: transparent;
+      color: var(--neon-green);
+      border: 2px solid var(--neon-green);
+      padding: 14px 32px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 1.15rem;
+      transition: all 0.3s;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    .terminal-cmd:hover {
+      background: rgba(0, 255, 0, 0.1);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+      transform: translateY(-3px);
+    }
+
+    .coin-image,
+    .musk-image {
+      margin: 40px 0;
+      max-width: 90%;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+      transition: transform 0.4s, box-shadow 0.4s;
+      cursor: pointer;
+    }    .coin-image:hover,
+    .musk-image:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.8);
+    }
+
+    .musk-section {
+      margin: 60px auto 80px;
+      padding: 25px;
+      background: rgba(0, 5, 15, 0.75);
+      border-radius: 16px;
+      max-width: 90%;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+      cursor: pointer;
+      transition: transform 0.3s;
+      backdrop-filter: blur(4px);
+    }
+    .musk-section:hover {
+      transform: scale(1.01);
+    }
+    .musk-caption {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
+      letter-spacing: 1.5px;
+    }
+
+    .timeline-section {
+      width: 90%;
+      max-width: 1000px;
+      margin: 60px auto;
+      position: relative;
+      padding-bottom: 80px;
+    }
+    .meteors-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: calc(100% + 200px);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .meteor {
+      position: absolute;
+      width: 4px;
+      height: 12px;
+      background: #aaa;
+      border-radius: 50% 50% 2px 2px;      box-shadow: 0 0 8px #fff, 0 0 16px #ff0;
+      opacity: 0;
+      animation: meteorFall linear forwards;
+    }
+    @keyframes meteorFall {
+      0% {
+        transform: translateY(-20px) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(120vh) translateX(100px) rotate(20deg);
+        opacity: 0;
+      }
+    }
+
+    .timeline-title {
+      font-size: 2rem;
+      margin-bottom: 40px;
+      text-shadow: 0 0 12px var(--neon-blue);
+      letter-spacing: 1.5px;
+      position: relative;
+      z-index: 2;
+    }
+    .timeline {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 24px;
+      position: relative;
+      z-index: 2;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      height: calc(100% - 60px);
+      width: 3px;
+      background: linear-gradient(to bottom, transparent, var(--neon-blue), transparent);
+      box-shadow: 0 0 12px var(--neon-blue);
+      z-index: 0;
+    }
+    @media (max-width: 768px) {      .timeline::before {
+        left: 30px;
+        top: 0;
+        height: 100%;
+        transform: none;
+      }
+    }
+    .timeline-item {
+      background: rgba(0, 10, 25, 0.85);
+      border: 1px solid var(--neon-blue);
+      border-radius: 12px;
+      padding: 24px;
+      width: 45%;
+      position: relative;
+      z-index: 1;
+      transition: all 0.4s ease;
+      backdrop-filter: blur(4px);
+    }
+    .timeline-item:hover {
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
+      transform: translateY(-6px);
+      border-color: var(--neon-cyan);
+    }
+    @media (max-width: 768px) {
+      .timeline-item {
+        width: 100%;
+        text-align: left;
+        padding-left: 70px;
+      }
+    }
+    .timeline-date {
+      color: var(--neon-cyan);
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+    .timeline-content h3 {
+      margin-bottom: 12px;
+      color: var(--neon-blue);
+    }
+    .timeline-content p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #0bf;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 30px;
+      margin: 60px auto 80px;      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .action-btn {
+      background: transparent;
+      color: var(--neon-yellow);
+      font-size: 1.6rem;
+      font-weight: bold;
+      padding: 18px 32px;
+      border: 2px solid var(--neon-yellow);
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 255, 0, 0.6);
+      transition: all 0.3s ease;
+      min-width: 240px;
+      letter-spacing: 1.5px;
+      position: relative;
+      overflow: hidden;
+    }
+    .action-btn:hover {
+      box-shadow: 0 0 35px rgba(255, 255, 0, 0.95);
+      transform: translateY(-4px);
+      background: rgba(255, 255, 0, 0.05);
+    }
+
+    footer {
+      margin: 50px 0 20px;
+      color: #066;
+      font-size: 0.9rem;
+      max-width: 600px;
+    }
+    .support {
+      margin: 20px 0 40px;
+      color: var(--neon-blue);
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
+    .support a {
+      color: var(--neon-cyan);
+      text-decoration: none;
+      transition: text-shadow 0.3s;
+    }
+    .support a:hover {
+      text-shadow: 0 0 8px var(--neon-cyan);
+    }
+
+    .astronaut-diagram,
+    .trump-token,
+    .ufo-trump {
+      margin: 40px 0;      max-width: 90%;
+      cursor: pointer;
+      transition: transform 0.4s, box-shadow 0.4s;
+      position: relative;
+      z-index: 10;
+    }
+    .astronaut-diagram img,
+    .trump-token img,
+    .ufo-trump img {
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+    }
+    .astronaut-diagram:hover,
+    .trump-token:hover,
+    .ufo-trump:hover {
+      transform: scale(1.01);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.8);
+    }
+
+    .next-phase {
+      font-size: 1.8rem;
+      color: var(--neon-yellow);
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin: 40px 0;
+      cursor: pointer;
+      text-shadow: 0 0 8px var(--neon-yellow);
+      animation: blinkYellow 1s infinite;
+    }
+    @keyframes blinkYellow {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    .modal-overlay,
+    #game-modal,
+    .modal-community,
+    .modal-airdrop,
+    .modal-distribution,
+    .modal-trump,
+    .modal-ufo,
+    .modal-phases,
+    .modal-moon {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;      height: 100%;
+      background: rgba(0,0,0,0.95);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 5000;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .modal-content,
+    .modal-phases .content,
+    .modal-moon .content,
+    .modal-community .content,
+    .modal-airdrop .content,
+    .modal-distribution .content,
+    .modal-trump .content,
+    .modal-ufo .content {
+      background: rgba(0, 0, 0, 0.92);
+      border: 2px solid var(--neon-blue);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 80%;
+      color: var(--neon-cyan);
+      font-size: 1.2rem;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    pre {
+      background: rgba(0, 20, 40, 0.6);
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: left;
+      font-family: 'Courier New', monospace;
+      font-size: 1.1rem;
+      border: 1px solid var(--neon-blue);
+      white-space: pre-wrap;
+    }
+
+    .close-btn,
+    .next-btn,
+    .modal-btn {
+      margin-top: 20px;
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--neon-cyan);      border: 1px solid var(--neon-cyan);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .next-btn {
+      background: var(--neon-yellow);
+      color: #000;
+      border: none;
+    }
+
+    .alien-image {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 6000;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    .alien-image img {
+      max-width: 90%;
+      max-height: 80vh;
+      border: 4px solid var(--neon-blue);
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+    }
+    .alien-image p {
+      color: var(--neon-cyan);
+      margin-top: 20px;
+      font-size: 1.2rem;
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+
+    .astronaut {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 80px;
+      height: auto;
+      z-index: 9998;
+      cursor: pointer;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.6));
+      opacity: 0.9;      display: none;
+    }
+    .astronaut:hover {
+      transform: scale(1.1) rotate(-5deg);
+    }
+    .astronaut-dialog {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid var(--neon-blue);
+      padding: 15px;
+      border-radius: 10px;
+      color: var(--neon-cyan);
+      font-size: 0.9rem;
+      max-width: 250px;
+      text-align: left;
+      z-index: 9999;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .astronaut-dialog.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #game-modal .hud {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      color: var(--neon-cyan);
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    #game-canvas {
+      border: 2px solid var(--neon-blue);
+      background: #000;
+      cursor: none;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+    }
+    #game-over, #pause-menu {
+      position: absolute;
+      color: #f00;
+      font-size: 2rem;
+      display: none;      text-align: center;
+    }
+    #pause-menu {
+      color: var(--neon-cyan);
+      font-size: 1.8rem;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid var(--neon-blue);
+    }
+    #restart-btn, #resume-btn, #pause-btn, #exit-game-btn {
+      margin-top: 12px;
+      padding: 8px 16px;
+      background: var(--neon-blue);
+      color: #000;
+      border: none;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      margin: 6px;
+    }
+    #close-game {
+      margin-top: 20px;
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--neon-cyan);
+      border: 1px solid var(--neon-cyan);
+      cursor: pointer;
+    }
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 3000;
+      animation: particleFade 1s forwards;
+    }
+    @keyframes particleFade {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    #level-up {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--neon-cyan);
+      font-size: 2rem;
+      font-weight: bold;
+      text-shadow: 0 0 20px var(--neon-cyan);
+      opacity: 0;      pointer-events: none;
+      z-index: 3001;
+    }
+
+    .tooltip {
+      position: fixed;
+      background: rgba(0, 0, 0, 0.8);
+      color: var(--neon-cyan);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      max-width: 250px;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      #animated-title { font-size: 2rem; }
+      .countdown div { min-width: 65px; padding: 12px 8px; font-size: 1.2rem; }
+      .terminal-cmd { padding: 12px 20px; font-size: 1rem; }
+      .action-btn { font-size: 1.3rem; min-width: 200px; padding: 14px 24px; }
+    }
+
+    .modal-content.animate {
+      animation: fadeIn 0.5s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Космический фон -->
+  <div class="cosmic-bg">
+    <div class="stars-far"></div>
+    <div class="stars-mid"></div>
+    <div class="stars-near"></div>
+    <div class="nebula"></div>
+  </div>
+
+  <div class="arrows-bg" id="arrows"></div>
+
+  <!-- Космическая рука -->
+  <a href="#" target="_blank" class="cosmic-hand" id="cosmic-hand">
+    <img src="images/cosmic-hand.png" alt="Cosmic Hand Holding $3IATLAS Coin">
+  </a>
+  <!-- Экран старта -->
+  <div id="start-screen">
+    <img src="images/start-image.png" alt="Start Image" class="start-image">
+    <button class="start-btn" id="start-btn">[ START SIGNAL ]</button>
+  </div>
+
+  <!-- Основной контент -->
+  <div id="main-content" style="display: none;">
+    <div class="hero" id="hero">
+      <div class="hero-content">
+        <h1 id="animated-title">
+          <span>T</span><span>H</span><span>E</span>  
+          <span>F</span><span>R</span><span>E</span><span>Q</span><span>U</span><span>E</span><span>N</span><span>C</span><span>Y</span><br>
+          <span>H</span><span>A</span><span>S</span>  
+          <span>B</span><span>E</span><span>E</span><span>N</span>  
+          <span>D</span><span>E</span><span>T</span><span>E</span><span>C</span><span>T</span><span>E</span><span>D</span>
+        </h1>
+        <div class="scan-line"></div>
+        <p class="terminal-line">> $3IATLAS protocol active. Awaiting contact.</p>
+
+        <div class="launch-label">LAUNCH IN</div>
+        <div class="countdown" id="countdown">
+          <div><span id="days">00</span>d</div>
+          <div><span id="hours">00</span>h</div>
+          <div><span id="minutes">00</span>m</div>
+          <div><span id="seconds">00</span>s</div>
+        </div>
+
+        <div class="btns">
+          <a href="https://t.me/Memcoin_3iatlas1" target="_blank" class="btn terminal-cmd">> connect_signal</a>
+          <a href="https://x.com/3iAtllas" target="_blank" class="btn terminal-cmd">> monitor_x_feed</a>
+        </div>
+      </div>
+    </div>
+
+    <img src="images/coin.png" alt="$3IATLAS Coin Art" class="coin-image" id="coin-image">
+
+    <div class="musk-section" id="musk-section">
+      <img src="images/musk.png" alt="Elon Musk supports $3IATLAS" class="musk-image">
+      <div class="musk-caption">Even Elon Musk supports us, X is inevitable</div>
+    </div>
+
+    <div class="timeline-section" id="timelineSection">
+      <div class="meteors-layer" id="meteors"></div>
+      <h2 class="timeline-title">History of the 3IATLAS Meteorite</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">Jul 2025</div>
+          <div class="timeline-content">            <h3>Discovery</h3>
+            <p>Detected by the ATLAS telescope in Chile as the third known interstellar object, following ‘Oumuamua and 2I/Borisov.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Aug 2025</div>
+          <div class="timeline-content">
+            <h3>Unique Properties</h3>
+            <p>Contains an unusually high amount of carbon dioxide and has a dense, “thick” coma; it is also older than the Solar System.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Sep 2025</div>
+          <div class="timeline-content">
+            <h3>Hyperbolic Orbit</h3>
+            <p>Travels on a hyperbolic trajectory at a speed of 246,000 km/h, ensuring it will leave the Solar System permanently.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Oct–Dec 2025</div>
+          <div class="timeline-content">
+            <h3>Observation Campaign</h3>
+            <p>Passed close to the Sun in October and near Earth in December, triggering intense scientific interest and extensive study.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Jan 2026</div>
+          <div class="timeline-content">
+            <h3>Origin Debate</h3>
+            <p>While most scientists classify it as a natural comet, a minority—including Avi Loeb—argue its behavior could hint at extraterrestrial origins.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2026+</div>
+          <div class="timeline-content">
+            <h3>Future Trajectory</h3>
+            <p>After perihelion and Earth flyby, it heads outward—with a possible Jupiter encounter in 2026 before vanishing into interstellar space.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">???</div>
+          <div class="timeline-content">
+            <h3>Final Transmission</h3>
+            <p>They will destroy everything and everyone. The end of everything.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">      <button id="community-trigger" class="action-btn">community 3iatlas</button>
+      <button id="airdrop-trigger" class="action-btn">airdrop</button>
+    </div>
+
+    <div class="astronaut-diagram" id="astronaut-diagram">
+      <img src="images/astronaut-diagram.png" alt="Astronaut with Token Distribution Diagram">
+    </div>
+
+    <div class="trump-token" id="trump-token">
+      <img src="images/trump-token.png" alt="Donald Trump holding $3IATLAS token">
+    </div>
+
+    <div class="ufo-trump" id="ufo-trump">
+      <img src="images/ufo-trump.png" alt="Aliens abducting Donald Trump">
+    </div>
+
+    <div class="next-phase" id="next-phase">what will happen next?</div>
+
+    <footer>
+      Contract: 0x... (add later)<br>
+      This is a memecoin experiment. Not financial advice.
+    </footer>
+
+    <div class="support">
+      Support: <a href="mailto:3i.atllas@gmail.com">3i.atllas@gmail.com</a>
+    </div>
+  </div>
+
+  <!-- Мини-игра -->
+  <div id="game-modal">
+    <div class="hud">
+      <div>SCORE: <span id="score">0</span></div>
+      <div>LVL: <span id="level">1</span></div>
+      <div>HEARTS: <span id="hearts">❤️❤️❤️</span></div>
+      <div>SHIELD: <span id="shield">OFF</span></div>
+    </div>
+    <canvas id="game-canvas" width="400" height="600"></canvas>
+    <div id="game-over">GAME OVER<br><button id="restart-btn">RESTART</button></div>
+    <div id="pause-menu">PAUSED<br><button id="resume-btn">RESUME</button><button id="exit-game-btn">EXIT GAME</button></div>
+    <div style="margin-top: 10px;"><button id="pause-btn">[ PAUSE ]</button></div>
+    <button id="close-game">CLOSE</button>
+    <div id="level-up">LEVEL UP!</div>
+  </div>
+
+  <!-- Подтверждение -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal-content">
+      <h3>ТЫ ТОЧНО ХОЧЕШЬ ЭТО УВИДЕТЬ?</h3>
+      <div class="modal-buttons">
+        <button class="modal-btn" id="confirm-yes">YES</button>        <button class="modal-btn" id="confirm-no">NO</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Изображение после YES -->
+  <div class="alien-image" id="alien-image">
+    <img src="images/alien-elon.png" alt="Elon & Alien" id="alien-img">
+    <p>С НАМИ БУДЕТ ВСЕ ХОРОШО. X IS INEVITABLE.</p>
+  </div>
+
+  <!-- Астронавт -->
+  <div class="astronaut" id="astronaut">
+    <img src="images/astronaut-zalupa.png" alt="Astronaut Zalupa">
+  </div>
+  <div class="astronaut-dialog" id="astronaut-dialog">Click me again for more...</div>
+
+  <!-- Модальные окна -->
+  <div class="modal-community" id="modal1">
+    <div class="content">
+      <h3>Join our galactic chat</h3>
+      <p>where we discuss the secrets of the universe and more.</p>
+      <a href="https://t.me/Memcoin_3iatlas1" target="_blank" style="color:#0ff; text-decoration:underline; margin:10px 0; display:inline-block;">👉 Join Chat</a>
+      <img src="images/aliens-table.png" alt="Aliens at table">
+      <button class="close-btn" id="close-modal1">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-community" id="modal2">
+    <div class="content">
+      <h3>Our community is the only safe place</h3>
+      <p>the rest will be destroyed 👽</p>
+      <img src="images/aliens-spaceship.png" alt="Aliens on spaceship">
+      <button class="close-btn" id="close-modal2">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-airdrop" id="modal-airdrop">
+    <div class="content">
+      <h3>Airdrop Distribution</h3>
+      <pre>Phase 1 - 10%
+Phase 2 - 20%
+Phase 3 - 30%</pre>
+      <p>Can be earned for activity in TG chat and X (quotes and other activity) and for website achievements</p>
+      <button class="close-btn" id="close-modal-airdrop">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-distribution" id="modal-distribution">
+    <div class="content">      <h3>Token Distribution</h3>
+      <pre>15% - team
+40% - airdrop
+40% - market
+5% - secret</pre>
+      <button class="close-btn" id="close-modal-distribution">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-trump" id="modal-trump">
+    <div class="content">
+      <h3>The Truth Behind $3IATLAS</h3>
+      <pre>**$3IATLAS isn’t just a token—it’s humanity’s digital response to a real interstellar event.**
+> Its lore is filled with hidden messages, astronomical Easter eggs, myths of ancient contact, and subtle hints of extraterrestrial intelligence.
+> Every element—from the website to the mini-game—contains layers of secrets, revealed only to those who pay close attention.
+> It’s a memecoin that bridges science, mystery, and the hope of contact.</pre>
+      <button class="close-btn" id="close-modal-trump">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-ufo" id="modal-ufo">
+    <div class="content">
+      <h3>What does Trump have to do with the 3iatlas meme coin?</h3>
+      <pre>It all started at the very beginning of the project, when there was a section called "<span id="doomsday-highlight">Doomsday</span>" (that section later ended), and it had its own unique lore.
+
+And in that lore, aliens replaced Trump and began a madness with the goal of destroying Earth, arriving on a ship (the ship was the 3iatlas meteorite).</pre>
+      <button class="close-btn" id="close-modal-ufo">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-phases" id="modal-phases">
+    <div class="content">
+      <h3>The project is currently in Phase 2.</h3>
+      <pre>Phase 1 - project creation and preparation for listing 
+Phase 2 - listing and aid drops
+Phase 3 - huge raids, community development, and more website content and aid drops 
+Phase 4 - to the moon</pre>
+      <button class="close-btn" id="close-modal-phases">Close</button>
+      <button class="next-btn" id="next-phase-btn">Next →</button>
+    </div>
+  </div>
+
+  <div class="modal-moon" id="modal-moon">
+    <div class="content">
+      <img src="images/cosmic-hand.png" alt="Moon Mission">
+      <p>stay with us until the moon</p>
+      <button class="close-btn" id="close-modal-moon">Close</button>
+    </div>
+  </div>
+  <div class="tooltip" id="tooltip">Doomsday is a column in which you see the countdown to the end of the world in a fictional universe, and what happened every day</div>
+
+  <!-- Аудио -->
+  <audio id="bg-music" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5d7f3c6e9d.mp3?filename=ambient-space-music-112193.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // === ЗВУКОВЫЕ ЭФФЕКТЫ ===
+    let audioContext;
+    function playTone(frequency, duration = 0.1, type = 'sine') {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      oscillator.type = type;
+      oscillator.frequency.value = frequency;
+      gainNode.gain.value = 0.1;
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + duration);
+    }
+
+    // === ФОНОВАЯ МУЗЫКА ===
+    const bgMusic = document.getElementById('bg-music');
+    let musicPlayed = false;
+
+    function playMusic() {
+      if (!musicPlayed) {
+        bgMusic.volume = 0.3;
+        bgMusic.play().catch(e => console.log("Audio play failed:", e));
+        musicPlayed = true;
+      }
+    }
+
+    // === ЗАПУСК ПРИ НАЖАТИИ ===
+    document.getElementById('start-btn').addEventListener('click', function() {
+      playMusic();
+      playTone(600, 0.3, 'sine');
+      
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      document.getElementById('cosmic-hand').style.display = 'none';
+      document.getElementById('astronaut').style.display = 'block';
+      
+      animateTitle();
+      generateArrows();      startMeteorRain();
+      startBackgroundMeteors();
+    });
+
+    // === АНИМАЦИЯ ЗАГОЛОВКА ===
+    function animateTitle() {
+      const letters = document.querySelectorAll('#animated-title span');
+      letters.forEach((letter, index) => {
+        letter.style.animationDelay = `${index * 0.05}s`;
+      });
+    }
+
+    // === СВЕЧИ ===
+    function generateArrows() {
+      const container = document.getElementById('arrows');
+      container.innerHTML = '';
+      for (let i = 0; i < 32; i++) {
+        const arrow = document.createElement('div');
+        arrow.className = 'arrow ' + (Math.random() > 0.5 ? 'up' : 'down');
+        arrow.style.left = `${(i / 32) * 100}%`;
+        arrow.style.top = `${Math.random() * 100}%`;
+        arrow.style.animationDelay = `-${Math.random() * 18}s`;
+        arrow.style.animationDuration = `${14 + Math.random() * 8}s`;
+        container.appendChild(arrow);
+      }
+    }
+
+    // === МЕТЕОРИТЫ НА ЛИНИИ ВРЕМЕНИ ===
+    function startMeteorRain() {
+      const layer = document.getElementById('meteors');
+      if (!layer) return;
+      let count = 0;
+      const MAX = 30;
+      function create() {
+        if (count >= MAX || document.visibilityState !== 'visible') return;
+        count++;
+        const m = document.createElement('div');
+        m.className = 'meteor';
+        const s = 3 + Math.random() * 3;
+        m.style.width = `${s}px`;
+        m.style.height = `${s * 3}px`;
+        m.style.left = `${Math.random() * 100}%`;
+        m.style.animationDuration = `${2 + Math.random() * 2}s`;
+        m.style.boxShadow = `0 0 ${8 * (0.7 + Math.random() * 0.5)}px #fff, 0 0 ${16 * (0.7 + Math.random() * 0.5)}px #ff0`;
+        layer.appendChild(m);
+        m.addEventListener('animationend', () => {
+          m.remove();
+          count--;
+        });
+      }      setInterval(create, 800 + Math.random() * 700);
+    }
+
+    // === ФОНОВЫЕ МЕТЕОРИТЫ ===
+    function createBackgroundMeteor() {
+      const m = document.createElement('div');
+      m.style.cssText = `
+        position: fixed; width: 2px; height: 12px;
+        background: linear-gradient(to bottom, #fff, transparent);
+        box-shadow: 0 0 8px #fff, 0 0 16px #ff0;
+        border-radius: 0 0 2px 2px;
+        z-index: -4; opacity: 0;
+        left: ${Math.random() * 100}%; top: ${Math.random() * 100}%;
+        transform: rotate(45deg);
+      `;
+      document.body.appendChild(m);
+      const dur = 1 + Math.random() * 2;
+      m.animate([
+        { opacity: 0, transform: 'translate(0,0) rotate(45deg)' },
+        { opacity: 1, transform: 'translate(100px,100px) rotate(45deg)' },
+        { opacity: 0, transform: 'translate(200px,200px) rotate(45deg)' }
+      ], { duration: dur * 1000, easing: 'cubic-bezier(0,0,0.3,1)' });
+      setTimeout(() => m.remove(), 4000);
+    }
+
+    function startBackgroundMeteors() {
+      setInterval(() => {
+        if (Math.random() > 0.3) createBackgroundMeteor();
+      }, 3000 + Math.random() * 5000);
+    }
+
+    // === СЧЁТЧИК ===
+    const launchDate = new Date("2026-01-30T00:00:00Z").getTime();
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const diff = launchDate - now;
+      if (diff <= 0) {
+        document.getElementById("countdown").innerHTML = "<div style='color:#0f0'>🚀 LAUNCHED!</div>";
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      document.getElementById("days").innerText = String(days).padStart(2, "0");
+      document.getElementById("hours").innerText = String(hours).padStart(2, "0");
+      document.getElementById("minutes").innerText = String(minutes).padStart(2, "0");
+      document.getElementById("seconds").innerText = String(seconds).padStart(2, "0");
+    }
+    updateCountdown();    setInterval(updateCountdown, 1000);
+
+    // === ЗВУК НА КНОПКАХ ===
+    document.querySelectorAll('.terminal-cmd, .action-btn, .start-btn, .modal-btn, .close-btn').forEach(btn => {
+      btn.addEventListener('mouseenter', () => {
+        playTone(400 + Math.random() * 200, 0.08, 'square');
+      });
+    });
+
+    // === МИНИ-ИГРА ===
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    let gameActive = false, gamePaused = false, score = 0, level = 1, lives = 3, shipX = 200;
+    const shipWidth = 38, shipHeight = 24;
+    let objects = [], hasShield = false, shieldTimer = null, speedBoost = false, speedBoostTimer = null;
+    let lightningActive = false, lightningTimer = null, animationFrameId = null, particleCount = 0;
+    const MAX_PARTICLES = 100;
+
+    const LEVELS = [
+      { score: 0, name: "Beginner", unlocks: ['star-small'] },
+      { score: 25, name: "Explorer", unlocks: ['star-big'] },
+      { score: 100, name: "Pioneer", unlocks: ['meteor', 'shield'] },
+      { score: 250, name: "Astronaut", unlocks: ['crystal'] },
+      { score: 500, name: "Earth Guardian", unlocks: ['earth'] },
+      { score: 1000, name: "Mars Colonist", unlocks: ['mars', 'heart'] },
+      { score: 3000, name: "Saturn Voyager", unlocks: ['saturn'] },
+      { score: 7500, name: "Lightning Master", unlocks: ['lightning'] },
+      { score: 15000, name: "Solar Lord", unlocks: ['sun'] },
+      { score: 30000, name: "UFO Hunter", unlocks: ['ufo'] },
+      { score: 50000, name: "Galaxy Explorer", unlocks: ['galaxy', 'blackhole'] }
+    ];
+
+    function getCurrentLevel() {
+      for (let i = LEVELS.length - 1; i >= 0; i--) {
+        if (score >= LEVELS[i].score) return i + 1;
+      }
+      return 1;
+    }
+
+    function showLevelUp(newLevel) {
+      const el = document.getElementById('level-up');
+      el.style.opacity = '1';
+      el.textContent = `LEVEL ${newLevel}!`;
+      playTone(800, 0.3, 'sine');
+      setTimeout(() => el.style.opacity = '0', 2000);
+    }
+
+    function activateLightning() {
+      lightningActive = true;
+      speedBoost = true;      playTone(1200, 0.5, 'sawtooth');
+      clearTimeout(lightningTimer);
+      lightningTimer = setTimeout(() => {
+        lightningActive = false;
+        speedBoost = false;
+      }, 10000);
+    }
+
+    function loseLife() {
+      lives--;
+      document.getElementById('hearts').textContent = '❤️'.repeat(lives);
+      if (lives <= 0) gameOver();
+    }
+
+    function drawShip() {
+      const x = shipX;
+      const y = canvas.height - shipHeight - 8;
+      const time = Date.now() / 10;
+
+      if (hasShield) {
+        const pulse = 0.6 + Math.sin(time * 2.5) * 0.4;
+        ctx.strokeStyle = `rgba(0, 255, 255, ${pulse})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(x, y + 6, 22, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#111';
+      ctx.beginPath();
+      ctx.moveTo(x, y - 16);
+      ctx.lineTo(x - 16, y + 6);
+      ctx.lineTo(x - 8, y + 18);
+      ctx.lineTo(x + 8, y + 18);
+      ctx.lineTo(x + 16, y + 6);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = '#0af';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      const coreSize = 4 + Math.sin(time * 4) * 1;
+      ctx.fillStyle = `rgba(0, 255, 255, ${0.8 + Math.sin(time * 4) * 0.2})`;
+      ctx.beginPath();
+      ctx.arc(x, y, coreSize, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(0, 100, 255, 0.4)';
+      ctx.fillRect(x - 14, y - 2, 4, 8);      ctx.fillRect(x + 10, y - 2, 4, 8);
+
+      ctx.fillStyle = '#333';
+      ctx.beginPath();
+      ctx.moveTo(x - 6, y + 18);
+      ctx.lineTo(x, y + 26);
+      ctx.lineTo(x + 6, y + 18);
+      ctx.closePath();
+      ctx.fill();
+
+      const flameY = y + 18;
+      const colors = ['#ff3300', '#ff9900', '#ffff33'];
+      for (let i = -1; i <= 1; i++) {
+        const offsetX = i * 6;
+        const h = 8 + Math.sin(time + i * 2) * 3;
+        const grad = ctx.createLinearGradient(x + offsetX, flameY, x + offsetX, flameY + h);
+        grad.addColorStop(0, colors[2]);
+        grad.addColorStop(1, colors[0]);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(x + offsetX - 2, flameY);
+        ctx.lineTo(x + offsetX, flameY + h);
+        ctx.lineTo(x + offsetX + 2, flameY);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    function createObject(type) {
+      if (!gameActive || gamePaused) return;
+      const obj = {
+        x: Math.random() * canvas.width,
+        y: -30,
+        type: type,
+        speed: 2 + Math.random() * 4,
+        collected: false,
+        rotation: 0
+      };
+
+      if (type === 'star-small') {
+        obj.size = 6 + Math.random() * 3;
+        obj.value = 1;
+        obj.color = '#ff0';
+      } else if (type === 'star-big') {
+        obj.size = 14 + Math.random() * 5;
+        obj.value = 5;
+        obj.color = '#0af';
+      } else if (type === 'mars') {
+        obj.size = 16;
+        obj.value = 10;      } else if (type === 'earth') {
+        obj.size = 20;
+        obj.value = 25;
+      } else if (type === 'saturn') {
+        obj.size = 26;
+        obj.value = 50;
+      } else if (type === 'crystal') {
+        obj.size = 10;
+        obj.color = '#0ff';
+      } else if (type === 'shield') {
+        obj.size = 12;
+        obj.color = '#0f0';
+      } else if (type === 'heart') {
+        obj.size = 14;
+        obj.color = '#f00';
+      } else if (type === 'meteor') {
+        obj.size = 14 + Math.random() * 8;
+        obj.trail = [];
+      } else if (type === 'lightning') {
+        obj.size = 18;
+        obj.value = 7500;
+        obj.color = '#ff0';
+      } else if (type === 'sun') {
+        obj.size = 32;
+        obj.value = 100;
+      } else if (type === 'ufo') {
+        obj.size = 28;
+        obj.value = 200;
+      } else if (type === 'galaxy') {
+        obj.size = 40;
+        obj.value = 500;
+      } else if (type === 'blackhole') {
+        obj.size = 36;
+        obj.value = 1000;
+      }
+
+      objects.push(obj);
+    }
+
+    function drawPlanet(ctx, x, y, size, type) {
+      const time = Date.now() / (type === 'mars' ? 5000 : type === 'earth' ? 4000 : 6000);
+      const rotation = time * (type === 'mars' ? 0.3 : type === 'earth' ? 0.4 : 0.2);
+
+      const shadowGrad = ctx.createRadialGradient(x - size * 0.3, y - size * 0.3, 0, x, y, size);
+      shadowGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      shadowGrad.addColorStop(1, 'rgba(0,0,0,0.2)');
+      ctx.fillStyle = shadowGrad;
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+      if (type === 'mars') {
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, size);
+        grad.addColorStop(0, '#ff7b4d');
+        grad.addColorStop(0.6, '#d95e31');
+        grad.addColorStop(1, '#8B3A2E');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#f0f8ff';
+        ctx.beginPath();
+        ctx.arc(x, y - size * 0.8, size * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y + size * 0.75, size * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rotation);
+        ctx.fillStyle = 'rgba(70, 30, 20, 0.6)';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, size * 0.7, size * 0.5, Math.PI / 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        ctx.strokeStyle = 'rgba(255, 180, 150, 0.25)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x, y, size + 1, 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (type === 'earth') {
+        const oceanGrad = ctx.createRadialGradient(x, y, 0, x, y, size);
+        oceanGrad.addColorStop(0, '#1e90ff');
+        oceanGrad.addColorStop(1, '#004080');
+        ctx.fillStyle = oceanGrad;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rotation);
+        ctx.fillStyle = '#3a8c3f';
+        ctx.beginPath();
+        ctx.ellipse(-size * 0.4, -size * 0.2, size * 0.3, size * 0.4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#8B7355';
+        ctx.beginPath();
+        ctx.ellipse(size * 0.3, size * 0.1, size * 0.35, size * 0.25, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.beginPath();
+        ctx.arc(x - size * 0.3, y - size * 0.1, size * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x + size * 0.4, y + size * 0.2, size * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y + size * 0.4, size * 0.18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(100, 200, 255, 0.4)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(x, y, size + 2, 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (type === 'saturn') {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rotation);
+        const bandColors = ['#f9a825', '#e65100', '#ffd54f', '#ff6f00'];
+        for (let i = 0; i < 5; i++) {
+          const bandY = -size + (i * size * 0.4);
+          const bandHeight = size * 0.35;
+          const color = bandColors[i % bandColors.length];
+          ctx.fillStyle = color;
+          ctx.globalAlpha = 0.85;
+          ctx.fillRect(-size * 1.2, bandY, size * 2.4, bandHeight);
+          ctx.globalAlpha = 1;
+        }
+        ctx.globalCompositeOperation = 'destination-in';
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(0, 0, size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.restore();
+
+        const ringInner = size * 1.2;
+        const ringOuter = size * 2.0;
+        const ringGrad = ctx.createRadialGradient(x, y, ringInner, x, y, ringOuter);
+        ringGrad.addColorStop(0, 'rgba(200, 180, 150, 0.3)');
+        ringGrad.addColorStop(1, 'rgba(150, 130, 100, 0.1)');
+        ctx.fillStyle = ringGrad;
+        ctx.beginPath();
+        ctx.ellipse(x, y, ringOuter, ringOuter * 0.25, 0, 0, Math.PI);
+        ctx.ellipse(x, y, ringInner, ringInner * 0.25, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(x, y, ringOuter, ringOuter * 0.25, 0, Math.PI, Math.PI * 2);        ctx.ellipse(x, y, ringInner, ringInner * 0.25, 0, 0, Math.PI, true);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(220, 200, 180, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.ellipse(x, y, ringOuter, ringOuter * 0.25, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(x, y, ringInner, ringInner * 0.25, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (type === 'sun') {
+        const glow = 0.7 + Math.sin(time * 2) * 0.3;
+        ctx.shadowColor = '#ffff00';
+        ctx.shadowBlur = 30 * glow;
+        ctx.fillStyle = '#ff5500';
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(x, y, size * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffaa00';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 8; i++) {
+          const angle = (i / 8) * Math.PI * 2 + time * 0.5;
+          const len = size * (1.1 + Math.sin(time + i) * 0.1);
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(angle) * size * 0.9, Math.sin(angle) * size * 0.9);
+          ctx.lineTo(Math.cos(angle) * len, Math.sin(angle) * len);
+          ctx.stroke();
+        }
+      } else if (type === 'ufo') {
+        ctx.fillStyle = '#333';
+        ctx.beginPath();
+        ctx.ellipse(x, y, size * 0.9, size * 0.3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(100, 200, 255, 0.7)';
+        ctx.beginPath();
+        ctx.arc(x, y - size * 0.1, size * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0, 200, 255, 0.8)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x, y - size * 0.1, size * 0.5 + 1, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = '#aaa';
+        ctx.lineWidth = 1.5;        for (let i = -1; i <= 1; i += 2) {
+          ctx.beginPath();
+          ctx.moveTo(x + i * size * 0.6, y - size * 0.3);
+          ctx.lineTo(x + i * size * 0.6, y - size * 0.6);
+          ctx.stroke();
+        }
+        const blink = Math.sin(time * 6) > 0;
+        if (blink) {
+          ctx.fillStyle = '#00ff00';
+          ctx.beginPath();
+          ctx.arc(x - size * 0.5, y, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x + size * 0.5, y, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (type === 'galaxy') {
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(x, y, size * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#88f';
+        ctx.lineWidth = 1.5;
+        for (let arm = 0; arm < 3; arm++) {
+          ctx.beginPath();
+          const offset = (arm / 3) * Math.PI * 2;
+          for (let r = 0; r <= size * 0.9; r += 2) {
+            const angle = (r / size) * 4 + offset + time;
+            const px = x + Math.cos(angle) * r;
+            const py = y + Math.sin(angle) * r;
+            if (r === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#fff';
+        for (let i = 0; i < 20; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist = Math.random() * size * 0.8;
+          const starSize = 0.5 + Math.random() * 1.5;
+          ctx.beginPath();
+          ctx.arc(x + Math.cos(angle) * dist, y + Math.sin(angle) * dist, starSize, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.shadowColor = '#4488ff';
+        ctx.shadowBlur = 15;
+        ctx.fillStyle = 'rgba(100, 150, 255, 0.1)';
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();        ctx.shadowBlur = 0;
+      } else if (type === 'blackhole') {
+        const distortion = ctx.createRadialGradient(x, y, 0, x, y, size * 1.5);
+        distortion.addColorStop(0, 'rgba(0,0,0,0.8)');
+        distortion.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = distortion;
+        ctx.beginPath();
+        ctx.arc(x, y, size * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        const accretion = ctx.createRadialGradient(x, y, size * 0.3, x, y, size);
+        accretion.addColorStop(0, '#ff0000');
+        accretion.addColorStop(0.5, '#ff6600');
+        accretion.addColorStop(1, '#ffff00');
+        ctx.strokeStyle = accretion;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(x, y, size * 0.8, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(time * 0.5);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 8; i++) {
+          const angle = (i / 8) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(angle) * size * 0.6, Math.sin(angle) * size * 0.6);
+          ctx.lineTo(Math.cos(angle) * size * 1.0, Math.sin(angle) * size * 1.0);
+          ctx.stroke();
+        }
+        ctx.restore();
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(x, y, size * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(x, y, size * 0.32, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    function drawStar(ctx, x, y, size, color, rotation) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rotation);
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 12;      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.lineTo(0, -size);
+        ctx.lineTo(size * 0.22, -size * 0.31);
+        ctx.lineTo(size * 0.95, -size * 0.31);
+        ctx.lineTo(size * 0.36, size * 0.12);
+        ctx.lineTo(size * 0.59, size * 0.81);
+        ctx.lineTo(0, size * 0.38);
+        ctx.lineTo(-size * 0.59, size * 0.81);
+        ctx.lineTo(-size * 0.36, size * 0.12);
+        ctx.lineTo(-size * 0.95, -size * 0.31);
+        ctx.lineTo(-size * 0.22, -size * 0.31);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawCrystal(ctx, x, y, size) {
+      ctx.fillStyle = '#0ff';
+      ctx.shadowColor = '#0ff';
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.moveTo(x, y - size);
+      ctx.lineTo(x + size * 0.6, y);
+      ctx.lineTo(x, y + size);
+      ctx.lineTo(x - size * 0.6, y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function drawShieldIcon(ctx, x, y, size) {
+      ctx.fillStyle = '#0f0';
+      ctx.shadowColor = '#0f0';
+      ctx.shadowBlur = 15;
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#000';
+      ctx.font = 'bold 12px Courier New';
+      ctx.textAlign = 'center';
+      ctx.fillText('🛡', x, y + 4);
+    }
+
+    function drawHeart(ctx, x, y, size) {
+      ctx.fillStyle = '#f00';
+      ctx.shadowColor = '#f00';
+      ctx.shadowBlur = 20;      ctx.beginPath();
+      ctx.arc(x - size * 0.35, y, size * 0.4, Math.PI * 0.25, Math.PI * 1.75);
+      ctx.arc(x + size * 0.35, y, size * 0.4, Math.PI * 1.25, Math.PI * 2.75);
+      ctx.lineTo(x, y + size);
+      ctx.closePath();
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function drawLightning(ctx, x, y, size) {
+      ctx.fillStyle = '#ff0';
+      ctx.shadowColor = '#ff0';
+      ctx.shadowBlur = 25;
+      ctx.beginPath();
+      ctx.moveTo(x, y - size);
+      ctx.lineTo(x - size * 0.3, y - size * 0.3);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x - size * 0.3, y + size * 0.3);
+      ctx.lineTo(x, y + size);
+      ctx.lineTo(x + size * 0.3, y + size * 0.6);
+      ctx.lineTo(x, y + size * 0.3);
+      ctx.lineTo(x + size * 0.3, y);
+      ctx.lineTo(x, y - size * 0.3);
+      ctx.lineTo(x + size * 0.3, y - size * 0.6);
+      ctx.closePath();
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function drawMeteor(ctx, obj) {
+      const { x, y, size } = obj;
+      const time = Date.now() / 400;
+      if (obj.trail && obj.trail.length > 1) {
+        for (let i = 0; i < obj.trail.length - 1; i++) {
+          const alpha = (i / obj.trail.length) * 0.8;
+          const trailSize = (1 - alpha) * (size * 1.2);
+          const brightness = 1 - alpha;
+          const r = Math.floor(255 * brightness);
+          const g = Math.floor(150 * brightness);
+          const b = Math.floor(30 * brightness);
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.9})`;
+          ctx.beginPath();
+          ctx.arc(obj.trail[i].x, obj.trail[i].y, trailSize, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      ctx.save();
+      ctx.translate(x, y);
+      const rotation = (obj.rotation || 0) + 0.015;      obj.rotation = rotation;
+      ctx.rotate(rotation);
+      const points = 16;
+      const irregularity = 0.15;
+      ctx.beginPath();
+      for (let i = 0; i <= points; i++) {
+        const angle = (i / points) * Math.PI * 2;
+        const wave = 1 + Math.sin(time * 2 + i * 0.8) * irregularity;
+        const radius = size * wave;
+        const px = Math.cos(angle) * radius;
+        const py = Math.sin(angle) * radius;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      const bodyGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, size);
+      bodyGrad.addColorStop(0, '#ff4500');
+      bodyGrad.addColorStop(0.6, '#cc3300');
+      bodyGrad.addColorStop(1, '#5a1a00');
+      ctx.fillStyle = bodyGrad;
+      ctx.fill();
+      ctx.strokeStyle = '#ff8800';
+      ctx.lineWidth = 1.5;
+      ctx.shadowColor = '#ff6600';
+      ctx.shadowBlur = 8;
+      for (let i = 0; i < 2; i++) {
+        ctx.beginPath();
+        const startAngle = Math.random() * Math.PI * 2;
+        const len1 = size * (0.3 + Math.random() * 0.3);
+        const len2 = size * (0.5 + Math.random() * 0.4);
+        const endAngle = startAngle + (Math.random() > 0.5 ? 0.4 : -0.4);
+        ctx.moveTo(Math.cos(startAngle) * len1, Math.sin(startAngle) * len1);
+        ctx.lineTo(Math.cos(endAngle) * len2, Math.sin(endAngle) * len2);
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+      const coreSize = 3 + Math.sin(time * 5) * 1.2;
+      const coreGlow = 0.7 + Math.sin(time * 6) * 0.3;
+      ctx.fillStyle = `rgba(255, 200, 0, ${coreGlow})`;
+      ctx.shadowColor = '#ffff00';
+      ctx.shadowBlur = 14;
+      ctx.beginPath();
+      ctx.arc(0, 0, coreSize, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+
+    function drawObjects() {
+      if (gamePaused) return;      objects.forEach(obj => {
+        if (obj.collected) return;
+        if (['star-small', 'star-big'].includes(obj.type)) {
+          drawStar(ctx, obj.x, obj.y, obj.size, obj.color, obj.rotation || 0);
+          obj.rotation = (obj.rotation || 0) + 0.02;
+        } else if (['mars','earth','saturn','sun','ufo','galaxy','blackhole'].includes(obj.type)) {
+          drawPlanet(ctx, obj.x, obj.y, obj.size, obj.type);
+        } else if (obj.type === 'crystal') {
+          drawCrystal(ctx, obj.x, obj.y, obj.size);
+        } else if (obj.type === 'shield') {
+          drawShieldIcon(ctx, obj.x, obj.y, obj.size);
+        } else if (obj.type === 'heart') {
+          drawHeart(ctx, obj.x, obj.y, obj.size);
+        } else if (obj.type === 'meteor') {
+          drawMeteor(ctx, obj);
+        } else if (obj.type === 'lightning') {
+          drawLightning(ctx, obj.x, obj.y, obj.size);
+        }
+      });
+    }
+
+    function createParticles(x, y, color, count = 8, sizeMult = 1) {
+      if (particleCount + count > MAX_PARTICLES) return;
+      particleCount += count;
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 4;
+        const size = (1 + Math.random() * 2) * sizeMult;
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.cssText = `
+          left: ${x}px; top: ${y}px;
+          width: ${size}px; height: ${size}px;
+          background: ${color};
+          border-radius: 50%;
+          box-shadow: 0 0 ${size * 3}px ${color};
+          position: absolute;
+          pointer-events: none;
+          z-index: 3000;
+        `;
+        document.body.appendChild(particle);
+        let posX = x, posY = y;
+        const animate = () => {
+          posX += Math.cos(angle) * speed;
+          posY += Math.sin(angle) * speed;
+          particle.style.left = `${posX}px`;
+          particle.style.top = `${posY}px`;
+          if (posY < canvas.height + 100 && posX > -50 && posX < canvas.width + 50) {
+            requestAnimationFrame(animate);
+          } else {            particle.remove();
+            particleCount--;
+          }
+        };
+        animate();
+      }
+    }
+
+    function activateShield() {
+      hasShield = true;
+      document.getElementById('shield').textContent = 'ON';
+      clearTimeout(shieldTimer);
+      shieldTimer = setTimeout(() => {
+        hasShield = false;
+        document.getElementById('shield').textContent = 'OFF';
+      }, 8000);
+      playTone(600, 0.3, 'square');
+    }
+
+    function activateSpeedBoost() {
+      speedBoost = true;
+      clearTimeout(speedBoostTimer);
+      speedBoostTimer = setTimeout(() => {
+        speedBoost = false;
+      }, 5000);
+      playTone(800, 0.2, 'sawtooth');
+    }
+
+    function addLife() {
+      if (lives < 3) {
+        lives++;
+        document.getElementById('hearts').textContent = '❤️'.repeat(lives);
+        createParticles(shipX, canvas.height - 50, '#f00', 12, 1.5);
+        playTone(500, 0.3, 'sine');
+      }
+    }
+
+    function updateScore(newScore) {
+      score = newScore;
+      document.getElementById('score').textContent = score;
+      const newLevel = getCurrentLevel();
+      if (newLevel > level) {
+        level = newLevel;
+        document.getElementById('level').textContent = level;
+        showLevelUp(level);
+      }
+    }
+
+    function updateObjects() {
+      if (gamePaused) return;      for (let i = objects.length - 1; i >= 0; i--) {
+        const obj = objects[i];
+        if (!obj) continue;
+        obj.y += obj.speed;
+        if (obj.type === 'meteor') {
+          obj.trail.push({ x: obj.x, y: obj.y });
+          if (obj.trail.length > 15) obj.trail.shift();
+        }
+        const shipY = canvas.height - shipHeight - 8 - 10;
+        const dx = obj.x - shipX;
+        const dy = obj.y - shipY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const collisionRadius = obj.size + 18;
+        if (distance < collisionRadius) {
+          if (obj.type === 'meteor') {
+            if (hasShield) {
+              hasShield = false;
+              document.getElementById('shield').textContent = 'OFF';
+              clearTimeout(shieldTimer);
+              createParticles(obj.x, obj.y, '#0f0', 15, 1.2);
+              playTone(400, 0.2, 'sine');
+              objects.splice(i, 1);
+            } else {
+              loseLife();
+              createParticles(obj.x, obj.y, '#ff3300', 20, 1.5);
+              playTone(200, 0.5, 'sawtooth');
+              objects.splice(i, 1);
+            }
+          } else if (!obj.collected) {
+            obj.collected = true;
+            if (['star-small','star-big','mars','earth','saturn','lightning','sun','ufo','galaxy','blackhole'].includes(obj.type)) {
+              updateScore(score + obj.value);
+              createParticles(obj.x, obj.y, '#0ff', 10, 1);
+              if (obj.type === 'lightning') activateLightning();
+            } else if (obj.type === 'shield') {
+              activateShield();
+              createParticles(obj.x, obj.y, '#0f0', 12, 1);
+            } else if (obj.type === 'crystal') {
+              activateSpeedBoost();
+              createParticles(obj.x, obj.y, '#0ff', 12, 1);
+            } else if (obj.type === 'heart') {
+              addLife();
+              createParticles(obj.x, obj.y, '#f00', 12, 1.3);
+            }
+            objects.splice(i, 1);
+            continue;
+          }
+        }
+        if (obj.y > canvas.height + 70) {
+          objects.splice(i, 1);        }
+      }
+    }
+
+    function drawBackground() {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const time = Date.now() / 2500;
+      for (let i = 0; i < 70; i++) {
+        const depth = 0.2 + Math.random() * 0.8;
+        const x = (i * 41 + time * depth * 8) % canvas.width;
+        const y = (i * 59 + time * depth * 4) % canvas.height;
+        const size = 0.3 + depth * 1.5;
+        const opacity = 0.2 + depth * 0.7;
+        ctx.fillStyle = `rgba(200, 220, 255, ${opacity})`;
+        ctx.fillRect(x, y, size, size);
+      }
+    }
+
+    function gameOver() {
+      gameActive = false;
+      document.getElementById('game-over').style.display = 'block';
+      clearTimeout(shieldTimer);
+      clearTimeout(speedBoostTimer);
+      clearTimeout(lightningTimer);
+    }
+
+    function gameLoop() {
+      if (!gameActive || gamePaused) return;
+      drawBackground();
+      drawShip();
+      drawObjects();
+      updateObjects();
+      const currentLevel = getCurrentLevel();
+      if (currentLevel >= 1 && Math.random() < 0.042) createObject('star-small');
+      if (currentLevel >= 2 && Math.random() < 0.011) createObject('star-big');
+      if (currentLevel >= 3 && Math.random() < 0.021) createObject('meteor');
+      if (currentLevel >= 3 && Math.random() < 0.0045) createObject('shield');
+      if (currentLevel >= 4 && Math.random() < 0.0055) createObject('crystal');
+      if (currentLevel >= 5 && Math.random() < 0.003) createObject('earth');
+      if (currentLevel >= 6 && Math.random() < 0.002) createObject('mars');
+      if (currentLevel >= 6 && Math.random() < 0.0009) createObject('heart');
+      if (currentLevel >= 7 && Math.random() < 0.0008) createObject('saturn');
+      if (currentLevel >= 8 && Math.random() < 0.000005) createObject('lightning');
+      if (currentLevel >= 9 && Math.random() < 0.0008 / 1.5) createObject('sun');
+      if (currentLevel >= 10 && Math.random() < (0.0008 / 1.5) / 1.5) createObject('ufo');
+      if (currentLevel >= 11 && Math.random() < ((0.0008 / 1.5) / 1.5) / 2) createObject('galaxy');
+      if (currentLevel >= 11 && Math.random() < (((0.0008 / 1.5) / 1.5) / 2) / 2) createObject('blackhole');
+      animationFrameId = requestAnimationFrame(gameLoop);
+    }
+    function startGame() {
+      playMusic();
+      gameActive = true;
+      gamePaused = false;
+      score = 0;
+      level = 1;
+      lives = 3;
+      shipX = canvas.width / 2;
+      objects = [];
+      hasShield = false;
+      speedBoost = false;
+      lightningActive = false;
+      clearTimeout(shieldTimer);
+      clearTimeout(speedBoostTimer);
+      clearTimeout(lightningTimer);
+      document.getElementById('score').textContent = '0';
+      document.getElementById('level').textContent = '1';
+      document.getElementById('shield').textContent = 'OFF';
+      document.getElementById('hearts').textContent = '❤️❤️❤️';
+      document.getElementById('game-over').style.display = 'none';
+      document.getElementById('pause-menu').style.display = 'none';
+      gameLoop();
+    }
+
+    function togglePause() {
+      if (!gameActive) return;
+      gamePaused = !gamePaused;
+      if (gamePaused) {
+        document.getElementById('pause-menu').style.display = 'block';
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      } else {
+        document.getElementById('pause-menu').style.display = 'none';
+        gameLoop();
+      }
+    }
+
+    function exitGame() {
+      gameActive = false;
+      gamePaused = false;
+      document.getElementById('game-modal').style.display = 'none';
+      clearTimeout(shieldTimer);
+      clearTimeout(speedBoostTimer);
+      clearTimeout(lightningTimer);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      objects = [];
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (!gameActive) return;      if (e.key === 'p' || e.key === 'P') {
+        togglePause();
+        return;
+      }
+      if (gamePaused) return;
+      const move = (speedBoost || lightningActive) ? 18 : 14;
+      if (e.key === 'ArrowLeft') shipX = Math.max(shipWidth / 2, shipX - move);
+      if (e.key === 'ArrowRight') shipX = Math.min(canvas.width - shipWidth / 2, shipX + move);
+    });
+
+    let touchStartX = 0;
+    canvas.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      e.preventDefault();
+    });
+    canvas.addEventListener('touchmove', (e) => {
+      if (!gameActive || gamePaused) return;
+      const touchX = e.touches[0].clientX;
+      const diff = touchX - touchStartX;
+      const move = (speedBoost || lightningActive) ? 18 : 14;
+      shipX = Math.max(shipWidth / 2, Math.min(canvas.width - shipWidth / 2, shipX + diff));
+      touchStartX = touchX;
+      e.preventDefault();
+    });
+
+    document.getElementById('coin-image').addEventListener('click', () => {
+      document.getElementById('game-modal').style.display = 'flex';
+      startGame();
+    });
+
+    document.getElementById('restart-btn').addEventListener('click', startGame);
+    document.getElementById('resume-btn').addEventListener('click', togglePause);
+    document.getElementById('pause-btn').addEventListener('click', togglePause);
+    document.getElementById('exit-game-btn').addEventListener('click', exitGame);
+    document.getElementById('close-game').addEventListener('click', exitGame);
+
+    // === ДРУГИЕ ИНТЕРАКТИВЫ ===
+    document.getElementById('musk-section').addEventListener('click', () => {
+      document.getElementById('confirm-modal').style.display = 'flex';
+    });
+    document.getElementById('confirm-no').addEventListener('click', () => {
+      document.getElementById('confirm-modal').style.display = 'none';
+    });
+    document.getElementById('confirm-yes').addEventListener('click', () => {
+      document.getElementById('confirm-modal').style.display = 'none';
+      document.getElementById('alien-image').style.display = 'flex';
+    });
+    document.getElementById('alien-image').addEventListener('click', () => {
+      document.getElementById('alien-image').style.display = 'none';
+    });
+    let clickCount = 0;
+    document.getElementById('astronaut').addEventListener('click', () => {
+      clickCount++;
+      let msg = "";
+      if (clickCount === 1) msg = "I wish I could live a little longer, but that damn 3iatlas ruined everything.";
+      else if (clickCount === 2) msg = "By the way, my name is Zalupa, I'm an astronaut, and on December 19th I was sent to explore 3iatlas.";
+      else if (clickCount === 3) msg = "Who knew it wasn't a meteorite but a spaceship...";
+      else {
+        msg = "Click me again to reset.";
+        clickCount = 0;
+      }
+      const dialog = document.getElementById('astronaut-dialog');
+      dialog.textContent = msg;
+      dialog.classList.add('show');
+      setTimeout(() => dialog.classList.remove('show'), 5000);
+    });
+
+    let lastScrollY = window.scrollY;
+    window.addEventListener('scroll', () => {
+      const current = window.scrollY;
+      const astronaut = document.getElementById('astronaut');
+      const dialog = document.getElementById('astronaut-dialog');
+      if (current > 100 && current > lastScrollY) {
+        astronaut.style.opacity = '0';
+        astronaut.style.pointerEvents = 'none';
+        dialog.classList.remove('show');
+      } else if (current < lastScrollY || current <= 100) {
+        astronaut.style.opacity = '0.9';
+        astronaut.style.pointerEvents = 'auto';
+      }
+      lastScrollY = current;
+    });
+
+    let communityClickCount = 0;
+    document.getElementById('community-trigger').addEventListener('click', () => {
+      communityClickCount++;
+      if (communityClickCount === 1) document.getElementById('modal1').style.display = 'flex';
+      else {
+        document.getElementById('modal2').style.display = 'flex';
+        communityClickCount = 0;
+      }
+    });
+    document.getElementById('airdrop-trigger').addEventListener('click', () => {
+      document.getElementById('modal-airdrop').style.display = 'flex';
+    });
+
+    // Закрытие модалок
+    ['modal1','modal2','modal-airdrop','modal-distribution','modal-trump','modal-ufo','modal-phases','modal-moon'].forEach(id => {
+      document.getElementById('close-' + id).addEventListener('click', () => {        document.getElementById(id).style.display = 'none';
+      });
+    });
+
+    document.getElementById('astronaut-diagram').addEventListener('click', () => {
+      const modal = document.getElementById('modal-distribution');
+      modal.style.display = 'flex';
+      modal.classList.add('animate');
+      setTimeout(() => modal.classList.remove('animate'), 500);
+    });
+
+    document.getElementById('trump-token').addEventListener('click', () => {
+      const modal = document.getElementById('modal-trump');
+      modal.style.display = 'flex';
+      modal.classList.add('animate');
+      setTimeout(() => modal.classList.remove('animate'), 500);
+    });
+
+    document.getElementById('ufo-trump').addEventListener('click', () => {
+      const modal = document.getElementById('modal-ufo');
+      modal.style.display = 'flex';
+      modal.classList.add('animate');
+      setTimeout(() => modal.classList.remove('animate'), 500);
+    });
+
+    document.getElementById('next-phase').addEventListener('click', () => {
+      const modal = document.getElementById('modal-phases');
+      modal.style.display = 'flex';
+      modal.classList.add('animate');
+      setTimeout(() => modal.classList.remove('animate'), 500);
+    });
+
+    document.getElementById('next-phase-btn').addEventListener('click', () => {
+      document.getElementById('modal-phases').style.display = 'none';
+      const modal = document.getElementById('modal-moon');
+      modal.style.display = 'flex';
+      modal.classList.add('animate');
+      setTimeout(() => modal.classList.remove('animate'), 500);
+    });
+
+    const doomsday = document.getElementById('doomsday-highlight');
+    const tooltip = document.getElementById('tooltip');
+    doomsday.addEventListener('mouseenter', (e) => {
+      const rect = doomsday.getBoundingClientRect();
+      tooltip.style.left = `${rect.left}px`;
+      tooltip.style.top = `${rect.bottom + 10}px`;
+      tooltip.style.opacity = '1';
+    });
+    doomsday.addEventListener('mouseleave', () => {
+      tooltip.style.opacity = '0';    });
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('modal-ufo').contains(e.target) && e.target !== doomsday) {
+        tooltip.style.opacity = '0';
+      }
+    });
+  </script>
+</body>
+</html>
